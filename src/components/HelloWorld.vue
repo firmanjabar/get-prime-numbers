@@ -1,42 +1,93 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-vuex" target="_blank" rel="noopener">vuex</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    <h3>Get Prime Numbers</h3>
+    <div class="container d-flex justify-content-center">
+      <form @submit="handleSubmit" class="my-3">
+        <div class="my-3">
+          <label for="number" class="form-label">Input Number</label>
+          <input
+            type="number"
+            class="form-control"
+            id="number"
+            aria-describedby="numberInfo"
+            v-model="data"
+          />
+          <div id="numberInfo" class="form-text">
+            We will check how many prime numbers bellow this number ({{ data }})
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+    <div class="container">
+      <button type="button" class="btn btn-primary">
+        Total Prime Numbers:
+        <span class="badge text-bg-danger">{{ result.length }}</span>
+      </button>
+      <div class="my-5">
+        <h5
+          class="badge rounded-pill text-bg-primary"
+          v-for="numb in result"
+          :key="numb"
+        >
+          {{ numb }}
+        </h5>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import { ref } from "vue";
+
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
-}
+  setup() {
+    const data = ref(2);
+    const result = ref([]);
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      getPrimes(data.value);
+    };
+
+    function getPrimes(n) {
+      function checkPrime(number) {
+        if (number <= 1) {
+          return false;
+        } else {
+          for (let i = 2; i < number; i++) {
+            if (number % i == 0) {
+              return false;
+            }
+          }
+          return true;
+        }
+      }
+
+      let arr = [];
+      let newArr = [];
+      for (let j = 2; j <= n; j++) {
+        arr.push(j);
+      }
+
+      arr.forEach(function (element) {
+        const isPrime = checkPrime(element);
+        if (isPrime) {
+          newArr.push(element);
+        }
+      });
+
+      result.value = newArr;
+    }
+
+    // expose to template and other options API hooks
+    return {
+      data,
+      handleSubmit,
+      result,
+    };
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
